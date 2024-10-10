@@ -5,20 +5,27 @@ namespace App\Livewire;
 use App\Models\Post;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class ShowPosts extends Component
 {
-    public $posts;
+    use WithPagination;
 
-    public function loadPosts()
+    public $search = '';
+    public function updatingSearch()
     {
-        $this->posts = Post::all(); //fetch all the records.
+        $this->resetPage();
     }
     
     public function render()
     {
-        $this->loadPosts();
-        
-        return view('livewire.show-posts');
+        $query = Post::query();
+        if ($this->search) {
+            $query->where('title', 'like', '%' . $this->search . '%')
+            ->orWhere('content', 'like', '%' . $this->search . '%');
+        }
+
+        $posts = $query->orderBy('created_at', 'desc')->paginate(5);
+        return view('livewire.show-posts', compact('posts'));
     }
 }

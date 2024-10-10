@@ -18,4 +18,5 @@
         <p>{{ $comment->content }}</p>
         </div>
     @endforeach
+    {{ $comments->links() }}
 </div>

@@ -5,10 +5,14 @@ namespace App\Livewire;
 use App\Models\Comment;
 use Livewire\Attributes\Reactive;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class ShowComments extends Component
 {
-    #[Reactive]
+    use WithPagination;
+
+    protected $paginationTheme = 'bootstrap';
+    // #[Reactive
     public $postId;
     public $newComment;
     public $author;
@@ -29,8 +33,7 @@ class ShowComments extends Component
     {
         $comments = Comment::where('post_id', $this->postId)
         ->orderBy('created_at', 'desc')
-        ->get();
-
+        ->paginate(3);
         return view('livewire.show-comments', ['comments' => $comments]);
     }
 }
