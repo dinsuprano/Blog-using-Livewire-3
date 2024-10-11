@@ -1,36 +1,38 @@
-<div>
+<div class="container mt-5">
     @if (session()->has('message'))
         <div class="alert alert-success">
-        {{ session('message') }}
+            {{ session('message') }}
         </div>
     @endif
 
 
-    <form wire:submit="savePost">
-        <div>
-            <label for="title">Title:</label>
-            <input type="text" id="title" wire:model.live="title">
-            @error('title') <span class="error">{{ $message }}</span>@enderror
+    <div class="mb-3">
+        <label for="title" class="form-label">Title:</label>
+        <input type="text" class="form-control" id="title" wire:model.live="title">
+        @error('title') <span class="text-danger">{{ $message }}</span> @enderror
+    </div>
+    
+    <div class="mb-3">
+        <label for="content" class="form-label">Content:</label>
+        <textarea id="content" class="form-control" wire:model.live="content"></textarea>
+        @error('content') <span class="text-danger">{{ $message }}</span> @enderror
+    </div>
 
-            <label for="content">Content:</label>
-            <input id="content" wire:model.live="content">
-            @error('content') <span class="error">{{ $message}}</span> @enderror
-        </div>
-        <br>
+    <div class="mb-3">
+        <label for="photos" class="form-label">Upload Photos</label>
+        <input type="file" class="form-control" id="file" wire:model.live="photos" multiple>
+        @error('content') <span class="text-danger">{{ $message }}</span> @enderror
+    </div>
+    
+    <!-- Multiple Image Preview -->
+    @if ($photos)
+    <div class="mb-3">
+        @foreach ($photos as $photo)
+            <img src="{{ $photo->temporaryUrl() }}" width="100" class="img-thumbnail" width="100">
+        @endforeach
+    </div>
+    @endif
 
-        <!-- Image Upload -->
-        <div>
-            <input type="file" wire:model="photos" multiple>
-            @error('photos.*') <span class="error">{{ $message }}</span>@enderror
+    <button type="submit" class="btn btn-primary" wire:click="save">Save</button>
 
-           <!-- Multiple Image Preview -->
-            @if ($photos)
-                @foreach ($photos as $photo)
-                    <img src="{{ $photo->temporaryUrl() }}" width="100">
-                @endforeach
-            @endif
-        </div>
-
-        <button type="submit">Save</button>
-    </form>
 </div>
