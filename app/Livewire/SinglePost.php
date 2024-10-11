@@ -13,8 +13,17 @@ class SinglePost extends Component
     }
     public function render()
     {
-        return view('livewire.single-post',[
-            'posts' => Post::find($this->postId),
+        // return view('livewire.single-post',[
+        //     'posts' => Post::find($this->postId),
+        // ]);
+
+        $posts = Post::find($this->postId);
+        if (!$posts) {
+            return view('errors.post-not-found')->extends('layouts.app');
+        }
+
+        return view('livewire.single-post', [
+            'posts' => $posts,
         ]);
     }
 }

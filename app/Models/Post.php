@@ -18,4 +18,9 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class);
     }
+    public function topLevelComments()
+    {
+        // The whereNull clause filters the comments to only include those without a parent.
+        return $this->hasMany(Comment::class)->whereNull('parent_comment_id');
+    }
 }
