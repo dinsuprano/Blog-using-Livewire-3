@@ -11,10 +11,10 @@ class ListPosts extends Component
     public $search = '';
     public function render()
     {
-    return view('livewire.list-posts', ['posts' => Post::where('title', 'like', '%' . $this->search .'%')
+        return view('livewire.list-posts', ['posts' => Post::where('title', 'like', '%' . $this->search .'%')
             ->orWhere('content', 'like', '%' . $this->search . '%')
             ->orderBy('created_at', 'desc')
-            ->paginate(10),
-        ]);
+            ->paginate(5),
+            ])->extends('layouts.app');
     }
 }

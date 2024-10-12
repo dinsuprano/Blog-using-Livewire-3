@@ -19,11 +19,11 @@ class SinglePost extends Component
 
         $posts = Post::find($this->postId);
         if (!$posts) {
-            return view('errors.post-not-found')->extends('layouts.app');
+            return view('livewire.post-not-found')->extends('layouts.app');
         }
 
         return view('livewire.single-post', [
             'posts' => $posts,
-        ]);
+        ])->extends('layouts.app');
     }
 }
