@@ -6,7 +6,7 @@
         </div>
         <div class="col-md-4">
             <div class="input-group">
-                <input type="text" wire:model="search" class="form-control" placeholder="Search posts...">
+                <input type="text" wire:model.live="search" class="form-control" placeholder="Search posts...">
                 {{-- <div class="input-group-append">
                     <span class="input-group-text"><i class="fas fa-search fa-2x"></i></span>
                 </div> --}}

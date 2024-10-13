@@ -9,6 +9,12 @@ class ListPosts extends Component
 {
     use WithPagination;
     public $search = '';
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
         return view('livewire.list-posts', ['posts' => Post::where('title', 'like', '%' . $this->search .'%')

@@ -35,6 +35,6 @@ class EditComment extends Component
     // The view file for this component should be located at resources/views/livewire/edit-comment.blade.php
     public function render()
     {
-        return view('livewire.edit-comment');
+        return view('livewire.edit-comment')->extends('layouts.app');
     }
 }
