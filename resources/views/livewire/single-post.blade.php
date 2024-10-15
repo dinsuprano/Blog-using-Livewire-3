@@ -18,6 +18,7 @@
             <!-- Comments Section -->
             <h2 class="h4 mb-4">Comments</h2>
             @livewire('comment-list-component', ['postId' => $posts->id])
+            
         </div>
     </div>
 </div>

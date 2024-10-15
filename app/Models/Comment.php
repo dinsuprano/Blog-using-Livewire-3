@@ -25,4 +25,12 @@ class Comment extends Model
     {
         return $this->belongsTo(Comment::class, 'parent_comment_id');
     }
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+    // public function isLikedByUser()
+    // {
+    //     return $this->likes()->where('user_id', auth()->id())->exists();
+    // }
 }
