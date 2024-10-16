@@ -21,7 +21,7 @@
                     <div class="card h-100">
                     <!-- Display the first image of the post -->
                         @if($post->photos->first())
-                            <img src="{{ Storage::url($post->photos->first()->photo_path) }}" alt="{{ $post->title }}" class="card-img-top">
+                            <img src="{{ Storage::url($post->photos->first()->photo_path) }}" alt="{{ $post->title }}" class="card-img-top" >
                         @endif
                         <div class="card-body">
                             <h5><a href="{{ route('single.post', $post->id)}}">{{ $post->title }}</a></h5>
