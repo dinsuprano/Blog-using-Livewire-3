@@ -5,10 +5,12 @@
             <h1 class="display-4 mb-5">{{ $posts->title }}</h1>
             <!-- Post Images -->
             @foreach($posts->photos as $photo)
-                <div class="mb-4">
-                    <img src="{{ Storage::url($photo->photo_path) }}" alt="{{ $posts->title }}" class="img-fluid rounded shadow">
+                <div class="mb-4 text-center">
+                    <img src="{{ Storage::url($photo->photo_path) }}" 
+                    alt="{{ $posts->title }}" class="img-fluid rounded shadow w-75">
                 </div>
             @endforeach
+
             <!-- Post Content -->
             <div class="post-content text-justify mb-5">
                 <p>{{ $posts->content }}</p>
