@@ -22,55 +22,84 @@
         @foreach($comments as $comment1)
             <div class="card mb-3">
                 <div class="card-body">
+
                     <!-- Author Section -->
                     <div class="d-flex align-items-center mb-2">
-                        <!-- Avatar (optional) -->
-                        <img src="{{ $comment1->user->avatar_url ?? 'default-avatar.png' }}" 
-                             alt="{{ $comment1->user->name }}'s avatar" 
-                             class="rounded-circle" 
-                             width="50" height="50"> <!-- Optional avatar -->
-
-                        <!-- Author's Name and Label -->
+                        <img src="{{ asset('storage/avatar/image.png') }}" 
+                            alt="{{ $comment1->user->name }}'s avatar" 
+                            class="rounded-circle" width="50" height="50">
                         <div class="ms-3">
                             <h5 class="card-title mb-0">
-                                <strong class="text-primary">{{ $comment1->user->name }}</strong> <!-- Author's name -->
+                                <strong class="text-primary">{{ $comment1->user->name }}</strong>
                             </h5>
-
-                            @if($comment1->user->role == "admin")
-                                <small class="text-muted">Author</small> <!-- Author label -->
-                            @elseif($comment1->user->role == "user")
-                                <small class="text-muted">User</small> <!-- Author label -->
-                            @endif
-                            
+                            <small class="text-muted">
+                                {{ $comment1->user->role == 'admin' ? 'Author' : 'User' }}
+                            </small>
                         </div>
                     </div>
 
                     <!-- Comment Content -->
                     <p class="card-text">{{ $comment1->content }}</p>
-
-                    <!-- Comment Timestamp -->
                     <p class="card-text">
                         <small class="text-muted">Posted {{ $comment1->created_at->diffForHumans() }}</small>
                     </p>
 
                     @if(auth()->check())
-                    <!-- Like Button -->
-                    <div class="d-flex align-items-center">
-                        <button wire:click="toggleLike({{ $comment1->id }})" class="btn btn-outline-primary btn-sm">
-                            {{ $comment1->isLikedByUser ? 'Unlike' : 'Like' }} ({{ $comment1->likes_count }})
-                        </button>
-                        <!-- Reply Button --> 
-                        <button wire:click="replyToComment({{ $comment1->id }})" class="btn btn-outline-secondary btn-sm" style="margin-left:5px">
-                            Reply
-                        </button>
-                    </div>
+                        <!-- Like Button -->
+                        <div class="d-flex align-items-center">
+                            <button wire:click="toggleLike({{ $comment1->id }})" class="btn btn-outline-primary btn-sm">
+                                {{ $comment1->isLikedByUser ? 'Unlike' : 'Like' }} ({{ $comment1->likes_count }})
+                            </button>
+
+                            <!-- Reply Button -->
+                            <button wire:click="replyToComment({{ $comment1->id }})" class="btn btn-outline-secondary btn-sm" style="margin-left:5px">
+                                Reply
+                            </button>
+                        </div>
+
+                        <!-- Reply Form -->
+                        @if($replyingTo === $comment1->id)
+                            <div class="form-group mt-3">
+                                <textarea wire:model.lazy="replyContent.{{ $comment1->id }}" class="form-control" rows="2" placeholder="Write a reply..."></textarea>
+                                @error('replyContent.' . $comment1->id) <span class="text-danger">{{ $message }}</span> @enderror
+                                <button wire:click="addReply({{ $comment1->id }})" class="btn btn-success btn-sm mt-2">Post Reply</button>
+                            </div>
+                        @endif
                     @endif
+                        <!-- Display Replies -->
+                        @if($comment1->replies->isNotEmpty())
+                            <div class="mt-3 ps-5">
+                                @foreach($comment1->replies as $reply)
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <img  src="{{ asset('storage/avatar/image.png') }}"  
+                                                    alt="{{ $reply->user->name }}'s avatar" 
+                                                    class="rounded-circle" width="40" height="40">
+                                                <div class="ms-3">
+                                                    <h6 class="card-title mb-0">
+                                                        <strong class="text-primary">{{ $reply->user->name }}</strong>
+                                                    </h6>
+                                                    <div>
+                                                        <small class="text-muted">
+                                                            {{ $reply->user->role == 'admin' ? 'Author' : 'User' }}
+                                                        </small>
+                                                    </div>
+                                                    <small class="text-muted">{{ $reply->created_at->diffForHumans() }}</small>
+                                                </div>
+                                            </div>
+                                            <p class="card-text">{{ $reply->content }}</p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
 
                 </div>
             </div>
         @endforeach
 
-        <!-- Livewire Pagination Links -->
+        <!-- Pagination -->
         <div class="d-flex justify-content-center">
             {{ $comments->links() }}
         </div>

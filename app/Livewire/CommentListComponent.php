@@ -11,43 +11,75 @@ use Livewire\WithPagination;
 class CommentListComponent extends Component
 {
     use WithPagination;
+
     public $post;
-    public $comment;
     public $newComment;
+    public $replyingTo = null; // To track which comment is being replied to
+    public $replyContent = []; // To store replies for each comment
+
+    protected $rules = [
+        'newComment' => 'required|min:5',
+        'replyContent.*' => 'required|min:5', // Validation for replies
+    ];
 
     public function mount($postId)
     {
         $this->post = Post::find($postId);
     }
 
+    // Function to add new comment
     public function addComment()
     {
-        $validatedData = $this->validate([
+        $this->validate([
             'newComment' => 'required|min:5',
         ]);
 
-        $comment = Comment::create([
+        Comment::create([
             'post_id' => $this->post->id,
             'user_id' => auth()->id(),
             'content' => $this->newComment,
         ]);
 
-        $this->newComment = '';
-        $this->post->topLevelComments->push($comment);
+        $this->newComment = ''; // Clear comment input
+        $this->post->load('topLevelComments'); // Refresh comment list
     }
 
-    // Separate function to fetch and return comments
+    // Function to add a reply to a specific comment
+    public function addReply($commentId)
+    {
+        $this->validate([
+            'replyContent.' . $commentId => 'required|min:5',
+        ]);
+
+        Comment::create([
+            'post_id' => $this->post->id,
+            'user_id' => auth()->id(),
+            'content' => $this->replyContent[$commentId], // Use dynamic reply input
+            'parent_comment_id' => $commentId, // Link to the parent comment
+        ]);
+
+        $this->replyContent[$commentId] = ''; // Clear the reply input for that comment
+        $this->replyingTo = null; // Reset the replying state
+        $this->post->load('topLevelComments'); // Refresh comment list
+    }
+
+    // Fetch and return top-level comments and their replies
     public function getComments()
     {
         return $this->post->topLevelComments()
-            ->withCount('likes') // Add a likes count
-            ->with(['user', 'likes' => function($query) {
-                $query->where('user_id', auth()->id()); // Check if the user liked the comment
-            }])
+            ->withCount('likes') // Count likes
+            ->with([
+                'user', 
+                'likes' => function($query) {
+                    $query->where('user_id', auth()->id()); // Check if the user liked the comment
+                },
+                'replies.user' // Include the replies and the users who posted them
+            ])
             ->orderBy('created_at', 'desc')
             ->paginate(5);
     }
 
+    // Like or unlike a comment
     public function toggleLike($commentId)
     {
         $comment = Comment::find($commentId);
@@ -68,8 +100,10 @@ class CommentListComponent extends Component
         }
     }
 
-    public function replyToComment(){
-        
+    public function replyToComment($commentId)
+    {
+        // Set which comment is being replied to
+        $this->replyingTo = $commentId;
     }
 
     public function render()
